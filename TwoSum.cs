@@ -6,19 +6,18 @@ public class Program
     public static int[] TwoSum(int[] nums, int target)
     {
         // your code here
-        Dictionary<int, int> map = new Dictionary<int, int>();
+        Dictionary<int, int> dict = new Dictionary<int, int>();
 
 
         for (int i = 0; i < nums.Length; i++)
         {
-            int firstNumber = nums[i];
-            int secondNumber = target - firstNumber;
+            int secondNumber = target - nums[i];
 
-            if (map.ContainsKey(secondNumber))
+            if (dict.ContainsKey(secondNumber))
             {
-                return new int[] { map[secondNumber], i };
+                Console.WriteLine($"{dict[secondNumber]}, {i}");
             }
-            map[nums[i]] = i;
+            dict[nums[i]] = i;
         }
 
 
