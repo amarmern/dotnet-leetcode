@@ -27,3 +27,36 @@ namespace HelloWorld
         }
     }
 }
+
+// effecient way
+
+
+class Program
+{
+    static void Main()
+    {
+        string str = "madam";
+
+        int left = 0;
+        int right = str.Length - 1;
+
+        bool isPalindrome = true;
+
+        while (left < right)
+        {
+            if (str[left] != str[right])
+            {
+                isPalindrome = false;
+                break;
+            }
+
+            left++;
+            right--;
+        }
+
+        if (isPalindrome)
+            Console.WriteLine("Palindrome");
+        else
+            Console.WriteLine("Not Palindrome");
+    }
+}
