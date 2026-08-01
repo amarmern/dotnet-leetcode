@@ -30,11 +30,16 @@ List<Department> departments = new List<Department>
     new Department { Id = 2, DepartmentName = "HR" },
     new Department { Id = 3, DepartmentName = "Finance" }
 };
+
+//returns the employee with the second-highest salary.
 var res = employees
 .OrderByDescending(e => e.Salary)
 .Skip(1)
 .First();
-
+/*
+David
+80000
+*/
 
 //1.Inner Join(Query Syntax)
 var result = from emp in employees

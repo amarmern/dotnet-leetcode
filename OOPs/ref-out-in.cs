@@ -89,12 +89,12 @@ public class Config
 
 //comparsion
 
-| Feature | const         | readonly               | static readonly         |
-| ---------------------------   | ------------- | ---------------------- | ----------------------- |
-| Compile - time constant | ✅             | ❌                      | ❌                       |
-| Assigned in constructor | ❌             | ✅                      | Only static constructor |
-| Per object value              | ❌             | ✅                      | ❌                       |
-| Shared across all instances   | ✅             | ❌                      | ✅                       |
-| Best use                      | PI, MaxLength | Object-specific values | Global configuration    |
+| Feature | const             | readonly                      | static readonly         |
+| ---------------------------   | -------------     | ----------------------        | ----------------------- |
+| Compile - time constant | ✅                   | ❌                      | ❌                       |
+| Assigned in constructor | ❌                | ✅                        | Only static constructor |
+| Per object value              | ❌                | ✅                        | ❌                       |
+| Shared across all instances   | ✅                | ❌                        | ✅                       |
+| Best use                      | PI, MaxLength     | Object-specific values        | Global configuration    |
 
 
