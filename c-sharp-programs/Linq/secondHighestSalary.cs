@@ -1,83 +1,39 @@
-//sample Data
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 class Employee
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    public int DepartmentId { get; set; }
+    public int Salary { get; set; }
 }
 
-class Department
+class Program
 {
-    public int Id { get; set; }
-    public string DepartmentName { get; set; }
-}
-
-List<Employee> employees = new List<Employee>
-{
-    new Employee { Id = 1, Name = "John", DepartmentId = 1 },
-    new Employee { Id = 2, Name = "David", DepartmentId = 2 },
-    new Employee { Id = 3, Name = "Alice", DepartmentId = 1 },
-    new Employee { Id = 4, Name = "Bob", DepartmentId = 4 }   // No matching department
-};
-
-List<Department> departments = new List<Department>
-{
-    new Department { Id = 1, DepartmentName = "IT" },
-    new Department { Id = 2, DepartmentName = "HR" },
-    new Department { Id = 3, DepartmentName = "Finance" }
-};
-
-//returns the employee with the second-highest salary.
-var res = employees
-.OrderByDescending(e => e.Salary)
-.Skip(1)
-.First();
-/*
-David
-80000
-*/
-
-//1.Inner Join(Query Syntax)
-var result = from emp in employees
-             join dept in departments
-             on emp.DepartmentId equals dept.Id
-             select new
-             {
-                 emp.Name,
-                 dept.DepartmentName
-             };
-
-foreach (var item in result)
-{
-    Console.WriteLine($"{item.Name} - {item.DepartmentName}");
-}
-
-/* o/p:
-John - IT
-David - HR
-Alice - IT
-*/
-
-//Left Join
-
-var result =
-    from emp in employees
-    join dept in departments
-        on emp.DepartmentId equals dept.Id
-        into deptGroup
-    from dept in deptGroup.DefaultIfEmpty()
-    select new
+    static void Main()
     {
-        emp.Name,
-        Department = dept?.DepartmentName ?? "No Department"
-    };
+        List<Employee> employees = new List<Employee>
+            {
+                new Employee { Id = 1, Name = "John", Salary = 50000 },
+                new Employee { Id = 2, Name = "David", Salary = 80000 },
+                new Employee { Id = 3, Name = "Alice", Salary = 70000 },
+                new Employee { Id = 4, Name = "Bob", Salary = 90000 },
+                new Employee { Id = 4, Name = "Sam", Salary = 90000 }
+            };
+        //LinQ Query
+        var res = employees
+                    .Select(s => s.Salary) // when duplicate salary value
+                    .Distinct() // when duplicate salary value
+                    .OrderByDescending(e => e.Salary)
+                    .Skip(1)
+                    .First();
 
-foreach (var item in result)
-{
-    Console.WriteLine($"{item.Name} - {item.Department}");
+        Console.WriteLine(res.Name);
+        Console.WriteLine(res.Salary);
+    }
+
+
 }
 
