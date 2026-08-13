@@ -38,8 +38,7 @@ class Program
         */
         var result = from emp in employees
                      join dept in departments
-                     on emp.DepartmentId equals dep.Id
-                     into deptGroup
+                     on emp.DepartmentId equals dep.Id into deptGroup
                      from dept in deptGroup.DefaultIfEmpty()
                      select new
                      {

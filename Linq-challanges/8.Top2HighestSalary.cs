@@ -27,11 +27,24 @@ class Program
                     .Select(s => s.Salary) // when duplicate salary value
                     .Distinct() // when duplicate salary value
                     .OrderByDescending(e => e.Salary)
-                    .Skip(1)
-                    .First();
+                    .Take(2);
 
         Console.WriteLine(res.Name);
         Console.WriteLine(res.Salary);
+
+        //Heigest Salary
+        var employee = employees
+                        .OrderByDescending(e => e.Salary)
+                        .First();
+
+        //Lowest Salary
+        var employee = employees
+                     .OrderBy(e => e.Salary)
+                     .First();
+
+        //Skip two records
+        var result = employees.Skip(2);
+
     }
 
 

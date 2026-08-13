@@ -10,7 +10,7 @@ namespace HelloWorld
     {
         public static void Main(string[] args)
         {
-            string str = "Hello";
+        
             char[] chars = str.ToCharArray();
             int left = 0;
             int right = str.Length - 1;

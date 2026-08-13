@@ -39,24 +39,24 @@ public void Pay() { }
 
 🔹 L – Liskov Substitution Principle (LSP)
 Derived classes should be replaceable with their base class without changing application behavior.
-public abstract class Bird
+public abstract class Vehicle
 {
 public abstract void Move();
 }
 
-public class Sparrow : Bird
+public class FourWheeler : Vehicle
 {
 public override void Move()
 {
-Console.WriteLine("Flying");
+Console.WriteLine("Moving");
 }
 }
 
-public class Penguin : Bird
+public class TwoWheeler : Vehicle
 {
 public override void Move()
 {
-Console.WriteLine("Swimming");
+Console.WriteLine("Mooving");
 }
 }
 ✅ Every derived class behaves correctly when used as its base type.

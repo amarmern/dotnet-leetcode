@@ -33,6 +33,22 @@ class Program
         {
             Console.WriteLine($"{item.Deprtment}=> {item.DepCount}");
         }
+
+        //Group by department
+        var groups = employees
+        .GroupBy(e => e.Department);
+
+        foreach (var group in groups)
+        {
+            Console.WriteLine(group.Key);
+
+            foreach (var emp in group)
+            {
+                Console.WriteLine(emp.Name);
+            }
+        }
     }
+
+
 }
 

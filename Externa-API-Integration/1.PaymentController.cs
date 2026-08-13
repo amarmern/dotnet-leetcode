@@ -6,7 +6,7 @@ public class PaymentController : ControllerBase
 {
     private readonly IprocessPayment _processPayment;
 
-    public PaymentController(IProgressPayment processPayment)
+    public PaymentController(IProessPayment processPayment)
     {
         _processPayment = processPayment;
     }

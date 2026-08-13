@@ -5,7 +5,7 @@ class Program
 {
     static void Main()
     {
-        string sentence = "this is this is csharp";
+        string sentence = "this is csharp";
         Dictionary<string, int> dict = new Dictionary<string, int>();
 
         foreach (var word in sentence.Split(' '))
