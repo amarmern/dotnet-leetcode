@@ -1,21 +1,17 @@
 using System;
 
-public delegate int Calculate(int a, int b);
-
-class Program
+public delegate int OperationDelegate(int x, int y);
+public class Program
 {
-    static int Add(int x, int y)
+    static int Add(int a, int b) => a + b;
+    static int MultiPly(int a, int b) => a * b;
+
+    public static void Main(string[] args)
     {
-        return x + y;
-    }
-
-    static void Main()
-    {
-        Calculate calc = Add;
-
-        int result = calc(10, 20);
-
-        Console.WriteLine(result);
+        OperationDelegate del = Add;
+        Console.WriteLine($"Addition = {del(5, 3)}");
+        del = MultiPly;
+        Console.WriteLine($"MultiPly = {del(5, 3)}");
     }
 }
 
