@@ -1,0 +1,21 @@
+[APIController]
+[Route("api/[controller]")]
+
+public class  OrderController : ControllerBase
+{
+    private readonly IorderService _orderService;
+
+    public OrderController(IorderService orderService)
+    {
+        _orderService = orderService;
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> PostOrder(OrderResuest  body)
+    {
+       var result = _orderService.CraesteOrderAsync(body);
+        return Ok(result);
+    }
+}
+

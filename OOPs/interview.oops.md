@@ -1,52 +1,54 @@
 Overdriven Concepts in c#
-• Creating the reference of parent class and object of parent class. Then ,
-parent class method only it will call, even virtual and override also.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+- Creating the reference of parent class and object of parent class. Then ,
+  parent class method only it will call, even virtual and override also.
 
-namespace HelloWorld
-{
-public class Program
-{
-class Animal
-{
-public virtual void Sound(){
-Console.WriteLine("Animal makes a sound");
-}
-}
+          using System;
+          using System.Collections.Generic;
+          using System.Linq;
+          using System.Text.RegularExpressions;
 
-        class Dog : Animal
-        {
-            public override void Sound()
-            {
-                Console.WriteLine("Dog is Barking");
-            }
-        }
+          namespace HelloWorld
+          {
+          public class Program
+          {
+          class Animal
+          {
+          public virtual void Sound(){
+          Console.WriteLine("Animal makes a sound");
+          }
+          }
 
-        public static void Main(string[] args)
-        {
-            Animal animal = new Animal();
-            animal.Sound();
+          class Dog : Animal
+          {
+              public override void Sound()
+              {
+                  Console.WriteLine("Dog is Barking");
+              }
+          }
 
-        }
-    }
+          public static void Main(string[] args)
+          {
+              Animal animal = new Animal();
+              animal.Sound();
 
-}
+          }
+          }
+
+      }
+
 // o/p: Animal makes a sound
 
-• When creating the reference of parent and object of child class after override child class method will be call. If not virtual and override then parent class methods will call.
+- When creating the reference of parent and object of child class after override ,child class method will be call. If not virtual and override then parent class methods will call.
 
-public class Program
-{
-class Animal
-{
-public virtual void Sound(){
-Console.WriteLine("Animal makes a sound");
-}
-}
+        public class Program
+        {
+        class Animal
+        {
+        public virtual void Sound(){
+        Console.WriteLine("Animal makes a sound");
+        }
+        }
 
         class Dog : Animal
         {
@@ -62,19 +64,21 @@ Console.WriteLine("Animal makes a sound");
             animal.Sound();
 
         }
-    }
+
+  }
 
 o/p: Dog is Barking
 
-• When, child class reference will associate with child class object then child class method only call.
-public class Program
-{
-class Animal
-{
-public virtual void Sound(){
-Console.WriteLine("Animal makes a sound");
-}
-}
+- When, child class reference will associate with child class object then child class method only call.
+
+        public class Program
+        {
+        class Animal
+        {
+        public virtual void Sound(){
+        Console.WriteLine("Animal makes a sound");
+        }
+        }
 
         class Dog : Animal
         {
@@ -90,35 +94,38 @@ Console.WriteLine("Animal makes a sound");
             animal.Sound();
 
         }
-    }
+
+  }
 
 • Note when, we create the child class reference and parent class of object then it will be the error.
-Method Hiding
-Hiding the Parent methods to override in child. Using the New Keword.
-public class Program
-{
-class Animal
-{
-public virtual void Sound(){
-Console.WriteLine("Animal makes a sound");
-}
-}
 
-        class Dog : Animal
-        {
-            public new void Sound()
-            {
-                Console.WriteLine("Dog is Barking");
-            }
-        }
+- Method Hiding
+  Hiding the Parent methods to override in child. Using the New Keword.
 
-        public static void Main(string[] args)
-        {
-            Animal animal = new Dog();
-            animal.Sound();
+          public class Program
+          {
+          class Animal
+          {
+          public virtual void Sound(){
+          Console.WriteLine("Animal makes a sound");
+          }
+          }
 
-        }
-    }
+          class Dog : Animal
+          {
+              public new void Sound()
+              {
+                  Console.WriteLine("Dog is Barking");
+              }
+          }
+
+          public static void Main(string[] args)
+          {
+              Animal animal = new Dog();
+              animal.Sound();
+
+          }
+      }
 
 // Animal makes a sound
 
@@ -152,15 +159,16 @@ Delegate
 
 | | |
 Email SMS Inventory
-namespace HelloWorld
-{
-public delegate void Notify();
-public class Program
-{
-static void SMS()
-{
-Console.WriteLine("SMS Sent");
-}
+
+        namespace HelloWorld
+        {
+        public delegate void Notify();
+        public class Program
+        {
+        static void SMS()
+        {
+        Console.WriteLine("SMS Sent");
+        }
 
         static void Email()
         {
@@ -283,21 +291,18 @@ Orchestration
 Central coordinator controls flow.
 
 stack vs heap memory in c#
-In C#, the stack manages short-lived data like method parameters and local variables, while the heap stores long-lived data, dynamically allocated objects, and reference types. [1, 2, 3]
-Memory architecture in the .NET runtime divides allocation into these two separate structures to balance execution speed with data flexibility. [1, 2]
-Summary Comparison
-Feature Stack Memory Heap Memory
-Data Structure Last-In, First-Out (LIFO) Hierarchical / Graph network
-Management Automatic via CPU instructions Managed by the Garbage Collector (GC)
-Access Speed Extremely fast (pointer math) Slower (requires pointer dereferencing)
-Size Limit Small and fixed (typically 1 MB per thread) Large and dynamic (system RAM limits)
-Scope Private to the current thread Global to the entire application
-Failure Mode StackOverflowException OutOfMemoryException
+In C#, the stack manages short-lived data like method parameters and local variables, while the heap stores long-lived data, dynamically allocated objects, and reference types.
+
+Memory architecture in the .NET runtime divides allocation into these two separate structures to balance execution speed with data flexibility.
+
+Stack Memoryand Heap Memory
 
 task vs thread vs threadpool in c#
-• Thread: A low-level operating system (OS) execution unit. When you create a manual new Thread(), you spin up a dedicated worker with its own memory stack, which carries heavy creation and context-switching overhead. [1, 2, 3, 4, 5]
-• ThreadPool: A managed collection of background threads maintained by the .NET runtime. Instead of constantly spawning and destroying threads, the system borrows an idle thread from this pool to execute work and returns it when done. [1, 2, 3, 4, 5]
-• Task: A high-level abstraction belonging to the Task Parallel Library (TPL). It represents an asynchronous operation ("a promise of future completion") and automatically leverages the ThreadPool under the hood to run its workloads. [1, 2, 3, 4]
+• Thread: A low-level operating system (OS) execution unit. When you create a manual new Thread(), you spin up a dedicated worker with its own memory stack, which carries heavy creation and context-switching overhead.
+
+• ThreadPool: A managed collection of background threads maintained by the .NET runtime. Instead of constantly spawning and destroying threads, the system borrows an idle thread from this pool to execute work and returns it when done.
+
+• Task: A high-level abstraction belonging to the Task Parallel Library (TPL). It represents an asynchronous operation ("a promise of future completion") and automatically leverages the ThreadPool under the hood to run its workloads. =
 
 ---
 
@@ -340,3 +345,319 @@ var query = \_articles.AsQueryable();
 
         return Ok(result);
     }
+
+- Interface in C#
+
+## What is an Interface?
+
+An **interface** in C# is a contract that defines **what a class must do**, but not **how it should do it**.
+
+- It contains method, property, event, or indexer declarations.
+- It cannot contain instance field implementations.
+- Any class implementing an interface **must provide the implementation** for all its members.
+
+---
+
+# Syntax
+
+```csharp
+public interface IEmployee
+{
+    void Work();
+}
+```
+
+Implementing the interface:
+
+```csharp
+public class Developer : IEmployee
+{
+    public void Work()
+    {
+        Console.WriteLine("Developer is writing code.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        IEmployee employee = new Developer();
+        employee.Work();
+    }
+}
+```
+
+### Output
+
+```
+Developer is writing code.
+```
+
+---
+
+# Why Do We Use Interfaces?
+
+Interfaces help to:
+
+- Achieve abstraction
+- Support loose coupling
+- Enable dependency injection (DI)
+- Make applications easier to test
+- Allow multiple classes to follow the same contract
+
+---
+
+# Real-Time Example
+
+## Payment Gateway
+
+```csharp
+public interface IPaymentGateway
+{
+    void ProcessPayment(decimal amount);
+}
+```
+
+### Credit Card
+
+```csharp
+public class CreditCardPayment : IPaymentGateway
+{
+    public void ProcessPayment(decimal amount)
+    {
+        Console.WriteLine($"Credit Card Payment: {amount}");
+    }
+}
+```
+
+### UPI
+
+```csharp
+public class UpiPayment : IPaymentGateway
+{
+    public void ProcessPayment(decimal amount)
+    {
+        Console.WriteLine($"UPI Payment: {amount}");
+    }
+}
+```
+
+### Client Code
+
+```csharp
+class Program
+{
+    static void Main()
+    {
+        IPaymentGateway payment = new CreditCardPayment();
+        payment.ProcessPayment(1000);
+
+        payment = new UpiPayment();
+        payment.ProcessPayment(500);
+    }
+}
+```
+
+### Output
+
+```
+Credit Card Payment: 1000
+UPI Payment: 500
+```
+
+---
+
+# Multiple Interface Implementation
+
+A class can implement multiple interfaces.
+
+```csharp
+public interface IFly
+{
+    void Fly();
+}
+
+public interface ISwim
+{
+    void Swim();
+}
+
+public class Duck : IFly, ISwim
+{
+    public void Fly()
+    {
+        Console.WriteLine("Duck is flying");
+    }
+
+    public void Swim()
+    {
+        Console.WriteLine("Duck is swimming");
+    }
+}
+```
+
+---
+
+# Interface with Dependency Injection (ASP.NET Core)
+
+```csharp
+public interface IProductService
+{
+    List<string> GetProducts();
+}
+
+public class ProductService : IProductService
+{
+    public List<string> GetProducts()
+    {
+        return new List<string> { "Laptop", "Mobile" };
+    }
+}
+```
+
+Register the service:
+
+```csharp
+builder.Services.AddScoped<IProductService, ProductService>();
+```
+
+Inject it into a controller:
+
+```csharp
+public class ProductController : ControllerBase
+{
+    private readonly IProductService _productService;
+
+    public ProductController(IProductService productService)
+    {
+        _productService = productService;
+    }
+
+    [HttpGet]
+    public IActionResult Get()
+    {
+        return Ok(_productService.GetProducts());
+    }
+}
+```
+
+This is one of the most common real-world uses of interfaces in ASP.NET Core.
+
+---
+
+# Interface vs Abstract Class
+
+| Interface                                  | Abstract Class                              |
+| ------------------------------------------ | ------------------------------------------- |
+| Defines a contract                         | Can define both contract and implementation |
+| Supports multiple interface implementation | A class can inherit only one abstract class |
+| No instance fields                         | Can contain fields                          |
+| Commonly used with Dependency Injection    | Used when sharing common implementation     |
+
+---
+
+# Common Interview Questions
+
+### 1. Can an interface have a constructor?
+
+**No.**
+
+Interfaces cannot be instantiated.
+
+---
+
+### 2. Can an interface have fields?
+
+**No.**
+
+Interfaces cannot have instance fields.
+
+---
+
+### 3. Can a class implement multiple interfaces?
+
+**Yes.**
+
+```csharp
+class Employee : IPrintable, ISavable
+{
+}
+```
+
+---
+
+### 4. Can an interface inherit another interface?
+
+**Yes.**
+
+```csharp
+public interface IA
+{
+    void MethodA();
+}
+
+public interface IB : IA
+{
+    void MethodB();
+}
+```
+
+---
+
+### 5. Why do we program against interfaces?
+
+Because it reduces coupling. The calling code depends on the contract instead of a specific implementation, making it easier to replace implementations, unit test, and maintain the application.
+
+---
+
+### 6. What is Interface Segregation Principle (ISP)?
+
+One of the SOLID principles:
+
+> Clients should not be forced to depend on methods they do not use.
+
+Instead of one large interface:
+
+```csharp
+interface IWorker
+{
+    void Work();
+    void Eat();
+    void Sleep();
+}
+```
+
+Prefer smaller, focused interfaces:
+
+```csharp
+interface IWork
+{
+    void Work();
+}
+
+interface IEat
+{
+    void Eat();
+}
+```
+
+---
+
+# Real-Time Examples
+
+Interfaces are widely used for:
+
+- Repository Pattern (`IRepository`)
+- Service Layer (`IOrderService`)
+- Logging (`ILogger`)
+- Payment Gateways (`IPaymentGateway`)
+- Notification Services (`IEmailService`, `ISmsService`)
+- Authentication Providers
+- Dependency Injection in ASP.NET Core
+
+---
+
+# Interview Answer (2 Minutes)
+
+> An interface in C# defines a contract that implementing classes must follow. It specifies what operations are available without defining how they are implemented. Interfaces promote abstraction, loose coupling, testability, and flexibility. They are heavily used in ASP.NET Core for dependency injection, repository patterns, service layers, logging, and external integrations. A class can implement multiple interfaces, making interfaces ideal for defining capabilities without enforcing inheritance.

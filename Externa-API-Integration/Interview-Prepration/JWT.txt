@@ -1,0 +1,233 @@
+USER
+  │
+  │ Login
+  ▼
+Identity Provider
+  │
+  │ Access Token / JWT
+  ▼
+React / Client
+  │
+  │ Authorization: Bearer JWT
+  ▼
+API Gateway
+  │
+  │ Route
+  ▼
+Order Service
+  │
+  ├── Validate JWT → Authentication
+  │
+  ├── Check Role/Claim/Scope → Authorization
+  │
+  ▼
+Order Database
+
+
+.AddJWTBearer(options =>
+{
+
+})
+
+[ApiController]
+[Route("api/auth")]
+public class AuthController : ControllerBase
+{
+    private readonly IAuthService _authService;
+
+    public AuthController(IAuthService authService)
+    {
+        _authService = authService;
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginRequest request)
+    {
+        var user = await _authService.ValidateUserAsync(
+            request.Username,
+            request.Password
+            );
+
+        if (user == null)
+            return Unauthorized();
+
+        var token = _authService.GenerateToken(user);
+
+        return Ok(new
+        {
+            accessToken = token
+        });
+    }
+}
+
+Role-based authorization
+
+[Authorize(Roles = "Admin")]
+[HttpDelete("{id}")]
+public IActionResult DeleteOrder(int id)
+{
+    return Ok();
+}
+
+Policy-based authorization
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("OrderWrite", policy =>
+    {
+        policy.RequireClaim("scope", "orders.write");
+    });
+});
+
+Header.Payload.Signature
+
+How do you implement JWT authentication in ASP.NET Core?
+
+Ans:
+I configure AddAuthentication().AddJwtBearer() with the issuer, audience, signing key
+and token validation parameters. During login, the identity provider authenticates 
+the user and issues an access token. The client sends that token as a Bearer token in
+the Authorization header. ASP.NET Core JWT middleware validates the signature, issuer,
+audience and expiration and creates the ClaimsPrincipal. I then use [Authorize], 
+roles, claims or policies for authorization. In a microservices architecture, 
+I prefer a centralized OAuth2/OIDC identity provider rather than generating tokens 
+independently in every microservice.
+
+                    ① Login
+Client ─────────────────────────► Identity Provider
+                                      │
+                                      │ Validate user
+                                      │
+                                      ▼
+                                 Generate JWT
+                                      │
+                                      │ ② Access Token
+                                      ▼
+Client ◄──────────────────────────────┘
+  │
+  │ ③ Authorization: Bearer <JWT>
+  ▼
+API Gateway
+  │
+  ▼
+Order Service
+  │
+  └── ④ Validate JWT
+
+
+Note:
+The Identity Provider or Authorization Server generates the JWT access token. 
+The client sends it as a Bearer token, and each ASP.NET Core microservice validates 
+the token and applies authorization using roles, claims, or policies.  
+
+And for service-to-service calls, you can use mTLS and/or OAuth2 client-credentials 
+tokens, depending on the security requirements.
+
+One simple way to remember
+
+Authorization Server → gives the token
+
+Resource Server → accepts and validates the token
+
+Client → uses the token
+
+JWT → carries the identity/claims/permissions
+
+
+                 AUTHORIZATION SERVER
+                 ┌──────────────────┐
+                 │ Login             │
+                 │ Validate user     │
+                 │ Generate JWT      │
+                 └────────┬─────────┘
+                          │
+                       JWT Token
+                          │
+                          ▼
+Client ──────────────────────────────► ASP.NET Core API
+                                           │
+                                    Middleware Pipeline
+                                           │
+                                  ┌────────┴────────┐
+                                  │                 │
+                           Authentication      Authorization
+                            Middleware           Middleware
+                                  │                 │
+                            Validate JWT       Check permission
+                                  │                 │
+                                  └────────┬────────┘
+                                           ▼
+                                      Controller
+
+
+
+
+. Authorization Server
+
+An Authorization Server is usually a separate system/application.
+
+Examples:
+
+Microsoft Entra ID
+Okta
+Keycloak
+Auth0
+
+Its job is to:
+
+Authenticate the user/client
+Issue access tokens
+Refresh tokens where applicable
+Define scopes/claims
+Manage authorization flows
+
+User
+ ↓
+Microsoft Entra ID
+ ↓
+JWT Access Token
+
+2. Middleware
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+Request
+   ↓
+Authentication Middleware
+   ↓
+Read Authorization: Bearer <token>
+   ↓
+Validate JWT
+   ↓
+Create HttpContext.User
+   ↓
+Authorization Middleware
+   ↓
+Check [Authorize]
+   ↓
+Controller
+
+In your kind of architecture, you might have:
+
+API
+ │
+ ├── Validate request             → Sync
+ │
+ ├── Check Redis                  → Async
+ │
+ ├── Query MongoDB/PostgreSQL     → Async
+ │
+ ├── Call another microservice    → Async
+ │
+ ├── Publish Kafka message        → Async
+ │
+ └── Calculate some values        → Sync
+
+
+I use synchronous methods for CPU-bound or simple in-memory operations where there 
+is no waiting involved. I use asynchronous methods for I/O-bound operations such as 
+database queries, HTTP calls, Redis, file operations, and messaging. Async allows 
+the ASP.NET Core thread to be released while waiting for I/O, which improves 
+scalability under high concurrency. I don't make every method async unnecessarily 
+because async doesn't provide a benefit for simple CPU-bound operations.

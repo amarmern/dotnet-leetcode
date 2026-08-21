@@ -44,6 +44,7 @@ class Program
 
         while (left < right)
         {
+            //Check isPalindrum
             if (str[left] != str[right])
             {
                 isPalindrome = false;
