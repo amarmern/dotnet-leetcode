@@ -3,7 +3,8 @@
 Abstraction
 Definition
 
-Abstraction means showing only the necessary details while hiding implementation details.
+Abstraction means showing only the necessary details while hiding implementation 
+details.
 
 */
 using System;

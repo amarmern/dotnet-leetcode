@@ -1,54 +1,33 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
-class Program
+namespace HelloWorld
 {
-    static int SecondLargest(int[] arr)
+    public class Program
     {
-        if (arr.Length < 2)
-            throw new Exception("Array should contain at least two elements.");
-
-        int largest = int.MinValue;
-        int secondLargest = int.MinValue;
-
-        foreach (int num in arr)
+        public static void Main(string[] args)
         {
-            if (num > largest)
+            int[] arr = { 3, 10, 7, 5, 12, 11, 25, 2 };
+            int largest = 0;
+            int secondLargest = 0;
+
+            foreach (int num in arr)
             {
-                secondLargest = largest;
-                largest = num;
+                if (num > largest)
+                {
+                    secondLargest = largest;
+                    largest = num;
+                }
+                else if (num > secondLargest && num < largest)
+                {
+                    secondLargest = num;
+                }
+
             }
-            else if (num > secondLargest && num != largest)
-            {
-                secondLargest = num;
-            }
+            Console.WriteLine(secondLargest);
         }
 
-        return secondLargest;
-    }
-
-    static void Main()
-    {
-        int[] arr = { 3, 10, 7, 5, 12, 11, 25, 2 };
-
-        Console.WriteLine("Second Largest = " + SecondLargest(arr));
-    }
-}
-
-// using Linq
-
-
-
-class Program
-{
-    static void Main()
-    {
-        int[] arr = { 3, 10, 7, 5, 12, 11, 25, 2 };
-
-        int secondLargest = arr.Distinct()
-                               .OrderByDescending(x => x)
-                               .Skip(1)
-                               .First();
-
-        Console.WriteLine(secondLargest);
     }
 }
