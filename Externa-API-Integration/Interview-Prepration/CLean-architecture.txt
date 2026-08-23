@@ -1,0 +1,124 @@
+                    ┌─────────────────────┐
+                    │    Web/API          │
+                    │ Controllers         │
+                    │ Middleware           │
+                    └──────────┬──────────┘
+                               ↓
+                    ┌─────────────────────┐
+                    │   Application       │
+                    │ Use Cases            │
+                    │ Services             │
+                    │ DTOs                 │
+                    │ Interfaces           │
+                    └──────────┬──────────┘
+                               ↓
+                    ┌─────────────────────┐
+                    │      Domain         │
+                    │ Entities             │
+                    │ Business Rules       │
+                    │ Value Objects        │
+                    └─────────────────────┘
+
+                    Infrastructure
+                    ┌─────────────────────┐
+                    │ EF Core              │
+                    │ SQL                  │
+                    │ Redis                │
+                    │ Kafka                │
+                    │ External APIs        │
+                    └─────────────────────┘
+
+
+Note: Dependencies should point inward toward the Domain.     
+
+How would I organize DLL/projects?
+
+MyCompany.Order.Api
+MyCompany.Order.Application
+MyCompany.Order.Domain
+MyCompany.Order.Infrastructure
+
+                         API
+                          |
+                          ↓
+                    Application
+                          |
+                          ↓
+                       Domain
+                          ↑
+                          |
+                    Infrastructure
+
+Ex:
+
+Application
+    |
+    | IOrderRepository
+    ↓
+Infrastructure
+    |
+    | OrderRepository
+    ↓
+EF Core / SQL Server
+
+Domain project
+The Domain is the most independent layer.
+Domain/
+ ├── Entities/
+ │    └── Order.cs
+ ├── ValueObjects/
+ ├── Enums/
+ ├── Exceptions/
+ └── DomainServices/
+
+Domain should NOT depend on:
+ ❌ EF Core
+❌ ASP.NET Core
+❌ Redis
+❌ Kafka
+❌ SQL Server
+❌ Controllers
+
+Application project
+
+Application contains use cases/application business logic.
+
+Application/
+ ├── Interfaces/
+ │    ├── IOrderRepository.cs
+ │    └── IPaymentService.cs
+ │
+ ├── Orders/
+ │    ├── CreateOrder/
+ │    └── GetOrder/
+ │
+ ├── DTOs/
+ └── Validators/
+
+ API project
+The API is the entry point.
+
+Api/
+ ├── Controllers/
+ ├── Middleware/
+ ├── Filters/
+ ├── Extensions/
+ └── Program.cs
+
+ THe thumb rules are
+
+ Domain
+  ↓
+Minimal dependencies
+
+Application
+  ↓
+Business/application concerns
+
+Infrastructure
+  ↓
+EF Core / Redis / Kafka / External SDKs
+
+API
+  ↓
+HTTP / Swagger / Auth / Middleware

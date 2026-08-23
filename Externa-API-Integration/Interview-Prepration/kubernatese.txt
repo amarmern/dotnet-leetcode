@@ -1,0 +1,75 @@
+Why Kubernetes?
+
+Kubernetes manages containers automatically.
+
+It provides:
+
+Auto scaling
+Load balancing
+Self-healing
+Rolling deployment
+Service discovery
+High availability
+
+Important interview topics:
+
+Pods
+
+Smallest deployable unit.
+
+Deployment
+
+Manages replicas.
+
+Service
+
+Exposes applications.
+
+Ingress
+
+API routing/load balancing.
+
+ConfigMap
+
+External configuration.
+
+Secret
+
+Stores passwords/API keys.
+
+HPA
+
+Horizontal Pod Autoscaler.
+
+StatefulSet
+
+For databases/Kafka.
+
+Example Scaling
+
+Without Kubernetes:
+
+1 server
+1 application instance
+
+With Kubernetes:
+
+10 pods
+Auto scaling
+Self healing
+Rolling deployment
+
+
+CI/CD Flow
+
+Typical deployment flow:
+
+GitHub
+   ↓
+Jenkins/GitHub Actions
+   ↓
+Build Docker Image
+   ↓
+Push to Docker Registry
+   ↓
+Deploy to Kubernetes

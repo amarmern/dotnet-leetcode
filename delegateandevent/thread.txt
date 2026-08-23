@@ -1,0 +1,33 @@
+1.What happens?
+Request Thread
+       |
+       |
+       ↓
+Waiting for File/API/DB
+       |
+       |
+Thread released
+       |
+       |
+Other work executes
+       |
+       |
+Continue after completion
+
+await does not necessarily create a new thread.
+
+
+2. Multithreading
+Purpose:
+
+Execute multiple tasks concurrently using multiple threads inside the same application.
+
+A process can have multiple threads.
+
+Process
+ |
+ |---- Thread 1
+ |       Print Numbers
+ |
+ |---- Thread 2
+         Print Letters

@@ -1,0 +1,130 @@
+| Feature                        | Abstract Class    | Interface                                                          |
+| ------------------------------ | ----------------- | ------------------------------------------------------------------ |
+| Can have method implementation | ✅ Yes             | ✅ Yes (default implementations in modern C#), but traditionally no |
+| Can have fields                | ✅ Yes             | ❌ No                                                               |
+| Can have constructors          | ✅ Yes             | ❌ No                                                               |
+| Supports multiple inheritance  | ❌ No              | ✅ Yes                                                              |
+| Used for                       | Common base class | Contract/behavior                                                  |
+
+Key Features
+Cannot create an object of an abstract class.
+
+❌ Invalid:
+
+Can have abstract methods (without a body).
+public abstract void CalculateSalary();
+Can have normal methods (with implementation).
+Yes
+
+1. Can we create an object of an abstract class?
+No
+// Compile-time error
+Employee emp = new Employee();
+
+2. Can an abstract class have a constructor?
+Answer: Yes. The constructor is called when a derived class object is created.
+
+3. Can an abstract class have non-abstract methods?
+
+Answer: Yes.
+
+4. Can an abstract class contain only normal methods?
+Answer: Yes. A class can be declared abstract even if it has no abstract methods, which prevents it from being instantiated directly.
+
+When to Use an Abstract Class
+
+Use an abstract class when:
+
+Multiple classes share common code.
+You want to provide a base implementation.
+You want to force derived classes to implement specific methods.
+
+Examples:
+
+Employee
+Vehicle
+Payment
+Shape
+
+Interview Questions
+1. Can a static class have a constructor?
+
+Answer:
+Yes, but only a static constructor.
+
+2. Can a static class implement an interface?
+
+Answer:
+No. Static classes cannot implement interfaces because interfaces define instance behavior.
+
+3. Can a sealed class have a constructor?
+
+Answer:
+Yes. Like any normal class, it can have constructors.
+
+4. Why use a sealed class?
+
+Answer:
+To prevent inheritance when you want to:
+
+Protect implementation
+Prevent overriding
+Improve API design
+Restrict extension
+
+Easy Way to Remember
+Normal Class → Create object + Inherit + Be inherited
+Static Class → No object + Only static members
+Sealed Class → Create object, but inheritance is blocked
+
+Real-Time Use of Sealed Class
+
+Suppose you have a security component:
+
+JWTTokenGenerator
+
+You don't want developers to override or modify its behavior.
+
+public sealed class JwtTokenGenerator
+{
+}
+
+Other examples:
+
+Encryption service
+Payment gateway implementation
+Logging provider
+Security utilities
+
+class Demo
+{
+    static Demo()
+    {
+        Console.WriteLine("Static");
+    }
+
+    public Demo()
+    {
+        Console.WriteLine("Normal");
+    }
+}
+
+new Demo();
+new Demo();
+
+Output?
+
+Static
+Normal
+Normal
+
+Static constructor executes only once.
+
+Can an interface have a constructor?
+
+❌ No.
+
+Interfaces cannot have constructors because they cannot be instantiated.
+
+
+

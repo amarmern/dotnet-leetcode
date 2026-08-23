@@ -11,12 +11,11 @@ class Program
 
         foreach (int num in arr)
         {
-            unique.Add(num);
+            if (unique.Add(num))
+            {
+                Console.Write(num + " ");
+            }
         }
 
-        foreach (int num in unique)
-        {
-            Console.Write(num + " ");
-        }
     }
 }
