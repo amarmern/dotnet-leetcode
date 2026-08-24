@@ -1,0 +1,24 @@
+SQS
+
+SQS = Simple Queue Service.
+
+Useful for asynchronous communication.
+
+SQS = Simple Queue Service.
+
+Useful for asynchronous communication.
+
+
+Order Service
+ |
+Wait for Notification Service
+instead of waiting simply.
+
+beeter: we can keep in SQS
+Order Service
+      |
+      v
+     SQS
+      |
+      v
+Notification Service

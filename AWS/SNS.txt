@@ -1,0 +1,23 @@
+SNS
+
+SNS = Simple Notification Service.
+
+Useful for publish/subscribe.
+
+              SNS Topic
+             /    |     \
+            /     |      \
+        SQS-A   SQS-B   Lambda
+
+| SQS                                             | SNS                                      |
+| ----------------------------------------------- | ---------------------------------------- |
+| Queue                                           | Pub/Sub                                  |
+| Consumer pulls/processes messages               | Pushes to subscribers                    |
+| One message generally processed by one consumer | One event can go to multiple subscribers |
+| Decoupling                                      | Fan-out                                  |
+
+
+API Gateway
+
+API Gateway acts as an API entry point.
+

@@ -1,0 +1,39 @@
+1. Entry
+   ↓
+Route 53 / CloudFront / API Gateway / ALB
+
+2. Compute
+   ↓
+EC2 / ECS / Fargate / Lambda / EKS
+
+3. Storage
+   ↓
+S3 / EBS / EFS
+
+4. Database
+   ↓
+RDS / Aurora / DynamoDB
+
+5. Cache
+   ↓
+ElastiCache / Redis
+
+6. Messaging
+   ↓
+SQS / SNS / EventBridge / Kafka
+
+7. Security
+   ↓
+IAM / KMS / WAF / Secrets Manager
+
+8. Networking
+   ↓
+VPC / Subnets / SG / NAT / IGW
+
+9. Observability
+   ↓
+CloudWatch / CloudTrail / X-Ray
+
+10. Reliability
+   ↓
+Multi-AZ / Auto Scaling / Backup / DR

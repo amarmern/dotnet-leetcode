@@ -1,0 +1,64 @@
+S3 — Simple Storage Service
+
+S3 is object storage.
+
+It's commonly used for:
+
+Images
+Videos
+Documents
+Backups
+Logs
+Static websites
+Data lakes
+
+S3 Storage Classes:
+use case:
+
+Frequently accessed files
+       -> S3 Standard
+
+Rarely accessed files
+       -> Standard-IA
+
+Long-term archive
+       -> Glacier
+
+S3 Versioning:
+
+S3 Pre-signed URLs
+
+Client
+ |
+API
+ |
+Generate Pre-signed URL
+ |
+ v
+Client
+ |
+Direct upload
+ |
+S3
+
+Example:
+
+POST /upload-url
+
+API
+ |
+Generate temporary S3 URL
+ |
+Client
+ |
+PUT file
+ |
+S3
+
+Benefits:
+
+Reduces API server load
+Secure temporary access
+Good for large files
+
+

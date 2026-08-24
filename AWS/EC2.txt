@@ -1,0 +1,55 @@
+EC2 gives me complete control over the server environment. I can install .NET, configure the OS, networking and supporting software. However, I have to manage patching, scaling and server availability myself, so for containerized .NET microservices I would generally consider ECS/Fargate.
+
+- this is core building block for AWS Compute Service.
+- High Customizable, Low lever service that gives the full control over the service.
+- one of the advantange 
+
+
+
+Interview answer — "How do you deploy .NET 8 microservices on AWS EC2?"
+
+You can answer like this:
+
+"First, I containerize or publish each ASP.NET Core 8 microservice separately. For a direct EC2 deployment, I provision Linux EC2 instances in private subnets, install the .NET 8 runtime, and copy the published application artifacts to the server. Each microservice runs on its own Kestrel port and is managed by systemd so that it automatically starts and restarts if it fails.
+
+I put Nginx or preferably an Application Load Balancer in front of the services. I expose only 80/443 publicly and keep the individual application ports private. For high availability, I deploy multiple EC2 instances across Availability Zones behind an ALB and use an Auto Scaling Group.
+
+For persistence, I use RDS rather than hosting the database on EC2. Redis can be provided through ElastiCache, files through S3, and asynchronous communication through SQS. Secrets such as database credentials are stored in Secrets Manager and accessed using IAM roles rather than hardcoded credentials.
+
+Finally, I use CloudWatch for logs, metrics and alarms and automate deployment through CI/CD. This gives me scalability, security, observability and high availability."
+
+That is the Senior/Lead-level answer rather than simply saying "I copy the DLL to EC2 and run dotnet app.dll."
+
+
+1. Develop
+      ↓
+2. Build/Test
+      ↓
+3. dotnet publish
+      ↓
+4. EC2
+      ↓
+5. Install .NET 8
+      ↓
+6. Copy application
+      ↓
+7. Kestrel
+      ↓
+8. systemd
+      ↓
+9. Nginx
+      ↓
+10. HTTPS
+      ↓
+11. Route 53
+      ↓
+12. ALB
+      ↓
+13. Multiple EC2 + Auto Scaling
+      ↓
+14. RDS + Redis + SQS + S3
+      ↓
+15. CloudWatch
+      ↓
+16. CI/CD
+

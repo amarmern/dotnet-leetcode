@@ -1,0 +1,113 @@
+How would you deploy an ASP.NET Core 8 microservice to ECS Fargate?
+
+"First, I containerize the ASP.NET Core 8 application using a multi-stage Dockerfile and the official .NET 8 ASP.NET runtime image. I expose port 8080, which is the default port for .NET 8 container images. I build and test the image locally and push it to an ECR repository.
+
+Then I create an ECS cluster and a Fargate task definition containing the ECR image, CPU, memory, port mapping, environment variables, IAM task role and CloudWatch logging configuration.
+
+I create an ECS service with multiple desired tasks and deploy those tasks in private subnets across Availability Zones. I put an Application Load Balancer in front of the service and configure a target group using the container's port 8080 and /health as the health-check endpoint.
+
+The ALB security group allows HTTPS from the internet, while the Fargate security group only allows traffic from the ALB security group. Database credentials are stored in Secrets Manager and the task uses an IAM role rather than hardcoded AWS credentials.
+
+For the microservices architecture, each service has its own ECS service and target group. For example, /orders routes to OrderService and /payments routes to PaymentService. RDS handles relational data, ElastiCache Redis handles distributed caching, and SQS handles asynchronous communication.
+
+Finally, I configure ECS service auto scaling and use CI/CD to build the Docker image, push it to ECR, create a new task-definition revision and deploy it to ECS.
+
+
+.NET 8 API
+    ↓
+Dockerfile
+    ↓
+docker build
+    ↓
+Test locally
+    ↓
+ECR
+    ↓
+Task Definition
+    ↓
+ECS Cluster
+    ↓
+ECS Service
+    ↓
+Fargate Tasks
+    ↓
+Target Group
+    ↓
+ALB
+    ↓
+Route 53
+    ↓
+Client
+
+three microservices deployment:--
+
+                         ALB
+                          |
+             +------------+------------+
+             |            |            |
+          /orders     /payments      /users
+             |            |            |
+          ECS Service  ECS Service  ECS Service
+             |            |            |
+          Fargate      Fargate      Fargate
+          /    \        /    \       /    \
+        Task  Task    Task  Task   Task  Task
+          |            |            |
+          +------------+------------+
+                       |
+                     Redis
+                       |
+                      RDS
+
+              Async communication
+                       |
+                      SQS
+                       |
+                  Worker Service
+
+                  For One service end to end
+
+                                   Developer
+                     |
+                     | git push
+                     v
+                GitHub Actions
+                     |
+                     v
+              dotnet build/test
+                     |
+                     v
+                Docker Build
+                     |
+                     v
+                     ECR
+                     |
+                     v
+             Task Definition
+                     |
+                     v
+                ECS Service
+                     |
+                     v
+                  Fargate
+                /        \
+             Task 1     Task 2
+                \        /
+                     |
+                    ALB
+                     |
+                     v
+                  Client
+
+
+ECS vs Lambda
+
+| ECS/Fargate            | Lambda                      |
+| ---------------------- | --------------------------- |
+| Container-based        | Function-based              |
+| Long-running services  | Event/function workloads    |
+| More runtime control   | Less infrastructure control |
+| Good for microservices | Good for event processing   |
+| Can run continuously   | Invoked on events/requests  |
+
+
