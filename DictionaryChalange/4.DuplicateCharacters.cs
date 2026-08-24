@@ -21,3 +21,7 @@ class DuplicateCharacters
         }
     }
 }
+//o/p:
+// r
+// g
+// m
