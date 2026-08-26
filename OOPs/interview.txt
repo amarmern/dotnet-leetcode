@@ -127,4 +127,55 @@ Can an interface have a constructor?
 Interfaces cannot have constructors because they cannot be instantiated.
 
 
+| Method 1                        | Method 2                         | Valid?                           | Reason                                                                                           |
+| ------------------------------- | -------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `void Process(int x)`           | `int Process(int x)`             | ❌ **Invalid**                    | Only the return type is different; parameters are identical.                                     |
+| `int Process(int x)`            | `string Process(string x)`       | ✅ **Valid**                      | Parameter types are different (`int` vs `string`).                                               |
+| `void Process(int x)`           | `void Process(int x, int y)`     | ✅ **Valid**                      | Number of parameters is different.                                                               |
+| `void Process(int x)`           | `void Process(double x)`         | ✅ **Valid**                      | Parameter types are different (`int` vs `double`).                                               |
+| `void Process(int x, string y)` | `void Process(string x, int y)`  | ✅ **Valid**                      | Parameter types/order are different.                                                             |
+| `void Process(int x, int y)`    | `void Process(int y, int x)`     | ❌ **Invalid**                    | Parameter names don't matter; both signatures are `(int, int)`.                                  |
+| `void Process(int x)`           | `void Process(params int[] x)`   | ⚠️ **Generally avoid/ambiguous** | `params` can create overload-resolution issues; signatures and calls need careful consideration. |
+| `void Process(ref int x)`       | `void Process(out int x)`        | ❌ **Invalid**                    | `ref` and `out` aren't sufficient to distinguish these overloads.                                |
+| `void Process(int x)`           | `void Process(ref int x)`        | ✅ **Valid**                      | `ref` is part of the method signature.                                                           |
+| `void Process(int x)`           | `void Process(int x, int y = 0)` | ⚠️ **Can be problematic**        | Optional parameters can make calls ambiguous with another overload.                              |
+
+
+
+is need to inherit when parent class have virtual or abstract in c sharp?
+1. The virtual Keyword
+public class Car 
+{
+    // Has a body. Inheritance is NOT required.
+    // Overriding this in a child class is optional.
+    public virtual void StartEngine() 
+    {
+        Console.WriteLine("Engine started with default settings.");
+    }
+}
+
+
+
+2. The abstract Keyword
+
+public abstract class Animal 
+{
+    // No body. You MUST inherit this class to use it.
+    // The child class MUST override this method.
+    public abstract void MakeSound(); 
+}
+
+public class Dog : Animal 
+{
+    // Required implementation
+    public override void MakeSound() 
+    {
+        Console.WriteLine("Bark!");
+    }
+}
+
+
+
+
+
 
