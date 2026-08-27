@@ -12,11 +12,18 @@ public class UPIPayment : IPayment
         Console.WriteLine("Payment done using UPI: " + amount);
     }
 }
+public class VisaPayment : IPayment
+{
+    public void Pay(decimal amount)
+    {
+        Console.WriteLine("Payment done using Visa: " + amount);
+    }
+}
 
 // Service
 public class PaymentService
 {
-    private IPayment _payment;
+    private readonly IPayment _payment;
 
     // Dependency Injection through constructor
     public PaymentService(IPayment payment)

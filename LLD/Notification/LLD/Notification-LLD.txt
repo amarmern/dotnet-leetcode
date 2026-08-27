@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace HelloWorld
+{
+
+public enum NotificationType
+{
+    Email,
+    Sms,
+    Push,
+    WhatsApp
+}
+
+public class Notification
+{
+    public Guid Id { get; set; }
+
+    public string UserId { get; set; }
+
+    public NotificationType Type { get; set; }
+
+    public string Recipient { get; set; }
+
+    public string TemplateName { get; set; }
+
+    public Dictionary<string, object> Data { get; set; }
+
+    public int Priority { get; set; }
+}
+
+	public interface INotificationSender
+	{
+		Task SendAsync(Notification Notification);
+	}
+
+public class EmailNotificationSender : INotificationSender
+{
+    public async Task SendAsync(Notification notification)
+    {
+        Console.WriteLine($"Sending EMAIL to {notification.Recipient}");
+        
+        // Call email provider
+        await Task.CompletedTask;
+    }
+}
+
+public class SmsNotificationSender : INotificationSender
+{
+    public async Task SendAsync(Notification notification)
+    {
+        Console.WriteLine($"Sending SMS to {notification.Recipient}");
+
+        // Call SMS provider
+        await Task.CompletedTask;
+    }
+}
+
+public class PushNotificationSender : INotificationSender
+{
+    public async Task SendAsync(Notification notification)
+    {
+        Console.WriteLine($"Sending PUSH to {notification.Recipient}");
+
+        // Call Firebase/APNS etc.
+        await Task.CompletedTask;
+    }
+}
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			var notification = new Notification
+            {
+                Id = Guid.NewGuid(),
+                UserId = "101",
+                Type = NotificationType.Email,
+                Recipient = "user@gmail.com",
+                TemplateName = "OrderPlaced",
+                Data = new Dictionary<string, object>
+                {
+                    ["OrderId"] = "ORD123",
+                    ["CustomerName"] = "Amrendra"
+                }
+            };
+		}
+	}
+}
