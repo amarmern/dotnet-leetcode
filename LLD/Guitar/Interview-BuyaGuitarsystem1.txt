@@ -1,0 +1,54 @@
+class Customer
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+
+    // 1 Customer -> Many Orders
+    public List<Order> Orders { get; set; }
+}
+
+class Order
+{
+    public int Id { get; set; }
+
+    // Many Orders -> 1 Customer
+    public int CustomerId { get; set; }
+    public Customer Customer { get; set; }
+
+    // 1 Order -> Many OrderItems
+    public List<OrderItem> Items { get; set; }
+}
+
+class OrderItem
+{
+    public int Id { get; set; }
+
+    // Many OrderItems -> 1 Order
+    public int OrderId { get; set; }
+    public Order Order { get; set; }
+
+    // Many OrderItems -> 1 Guitar
+    public int GuitarId { get; set; }
+    public Guitar Guitar { get; set; }
+
+    public int Quantity { get; set; }
+
+    /// can Calculate the Price for buissinee
+
+    public decimal GetTotal()
+    {
+        return Guitar.Price * Quantity;
+    }
+}
+
+class Guitar
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+
+    // Optional navigation
+    public List<OrderItem> OrderItems { get; set; }
+    
+}
+

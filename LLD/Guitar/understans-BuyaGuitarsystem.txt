@@ -1,0 +1,98 @@
+1. Identify the main requirement
+   EX:
+   Customer can browse guitars.
+   Customer can search/filter guitars.
+   Customer can add guitar to Cart
+   Customer can place the order
+   Customer can make Payment
+   Admin Can add/remove/update guitar
+
+2. Identify the main entities/class
+   A Simple LLD can have
+
+User
+├── Customer
+└── Admin
+
+Guitar
+Cart
+CartItem
+Order
+OrderItem
+
+Payment
+├── CardPayment
+├── UPIPayment
+└── NetBankingPayment
+
+GuitarStore
+
+3.  Show the relationships between entities class
+
+    3.1 One Customer → Many Orders (for creating the Customer Class Enities)
+        One Customer → Many Orders
+        Customer  1 -------- * Order
+    Class Customer
+    {
+        public int Id {get; set;}
+        public string Name {get; set;}
+
+        // Navigation between List of Orders
+        public List<Order> Orders {get; set;}
+
+    }
+
+    Class Order
+    {
+        public int Id {get; set;}
+
+        //Foriegn Key
+        public int CustomerId {get; set}
+
+         // Navigation property
+        public Customer Customer {get; set;}
+
+    }
+
+    3.2 Creating the Order Class Entities (for understaing Created one more Order Enity)
+        One Order → Many OrderItems
+        Order  1 -------- * OrderItem
+    Class Order
+    {
+         public int Id {get; set;}
+
+         public List<OrderItem> Items {get; set;}
+    }
+
+    Class OrderItem
+    {
+          public int Id { get; set; }
+          public int OrderId { get; set; }
+          public Order Order {get; set;}
+          public int Quantity {get; set;}
+    }
+
+    3. Creating the Guitar class Entity
+        One Guitar → Many OrderItems
+        Guitar  1 -------- * OrderItem
+
+    class Guitar
+    {
+        public int Id {get; set;}
+        public string Name {get; set;}
+        public decimal Price {get; set;}
+
+        public List<OrderItem> OrderItems
+
+    }
+
+    class OrderItem
+    {
+        public int GuitarId { get; set; }
+
+        public Guitar Guitar { get; set; }
+    }
+
+
+
+

@@ -1,0 +1,26 @@
+1. Customer selects Guitar
+          ↓
+2. Add Guitar to Cart
+          ↓
+3. Checkout
+          ↓
+4. Check Inventory
+          ↓
+5. Create Order
+          ↓
+6. Calculate Total Amount
+          ↓
+7. Select Payment Method
+          ↓
+8. Process Payment
+          ↓
+9. Payment Success
+          ↓
+10. Reduce Inventory
+          ↓
+11. Update Order = Paid
+          ↓
+12. Send Order Confirmation
+
+
+For the Guitar Purchase System, I would start with Product, Customer, Cart, Order, OrderItem, Inventory and Payment entities. For payment methods such as Card and UPI, I would use Strategy Pattern, and Factory Pattern can create the appropriate payment strategy. I would use Repository Pattern for data access and Dependency Injection for loose coupling. The purchase flow would be Cart → Order → Inventory validation → Payment → Order confirmation. If the system needs to scale, I can separate Catalog, Order, Payment and Inventory into services and use Kafka for asynchronous events.

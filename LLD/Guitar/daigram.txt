@@ -1,0 +1,24 @@
+Customer
+   |
+   | 1
+   |
+   | *
+  Order
+   |
+   | 1
+   |
+   | *
+OrderItem
+   |
+   | *
+   |
+   | 1
+  Guitar
+
+
+Order
+  |
+  | 1
+  |
+  | 1
+Payment
