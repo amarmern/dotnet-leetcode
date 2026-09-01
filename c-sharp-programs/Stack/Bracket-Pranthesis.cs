@@ -31,6 +31,11 @@ class Program
             else if (ch == ')' || ch == '}' || ch == ']')
             {
                 // No opening bracket available
+                if (stack.Count == 0)
+                {
+                    return false;
+                }
+                // No opening bracket available
                 char top = stack.Pop();
 
                 // check matching pair

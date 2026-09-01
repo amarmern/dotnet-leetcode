@@ -343,7 +343,13 @@ EXPLAIN ANALYZE actually executes the query and reports runtime information.
 
 How Do You Optimize a Slow PostgreSQL Query?
 
-First I reproduce the issue and run EXPLAIN ANALYZE to understand the actual execution plan. I check for sequential scans, inefficient joins, incorrect row estimates, sorting, excessive I/O and whether appropriate indexes are being used. Then I review indexes, query predicates, joins, returned columns and statistics. I also check for blocking, lock contention and whether the query is returning more data than necessary. Finally, I compare the execution plan and runtime before and after the change.
+First I reproduce the issue and run EXPLAIN ANALYZE to understand the actual 
+execution plan. I check for sequential scans, inefficient joins, incorrect row 
+estimates, sorting, excessive I/O and whether appropriate indexes are being used. 
+Then I review indexes, query predicates, joins, returned columns and statistics. 
+I also check for blocking, lock contention and whether the query is returning more 
+data than necessary. Finally, I compare the execution plan and runtime before and
+after the change.
 
 
 

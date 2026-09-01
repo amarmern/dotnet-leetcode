@@ -1,0 +1,286 @@
+1. key points:
+   Create the order before initiating payment.
+   Use the payment gateway's hosted checkout or SDK so card data never reaches your backend.
+   Verify webhook signatures and treat the webhook as the source of truth.
+   Make webhook processing idempotent to handle duplicate notifications safely.
+   Publish a PaymentCompleted event so downstream services (inventory, shipping, notifications) are decoupled.
+   Handle retries only for transient failures, and use exponential backoff.
+   Design for eventual consistency so webhook retries can recover from server crashes after a successful payment.
+
+2.Q. When webhooks retry?
+
+Short interview answer
+
+Webhooks retry when the payment gateway does not receive a successful acknowledgment (usually an HTTP 2xx response) from our server, or if there is a network or server failure. The gateway retries the webhook with exponential backoff until it succeeds or reaches its retry limit.
+
+3.Common scenarios when webhooks retry
+
+Ans:
+
+1. Your server is down
+   Gateway → POST /webhook
+   ↓
+   Server unavailable (503)
+
+Gateway retries later.
+
+2. Request timeout
+   Gateway → POST /webhook
+   ↓
+   No response within timeout
+
+Gateway retries.
+
+3. Network failure
+   Gateway
+   ↓
+   Internet issue
+   ↓
+   Webhook not delivered
+
+Gateway retries. 4. Your API returns an error
+HTTP 500
+HTTP 502
+HTTP 503
+
+4. Why is idempotency important?
+   A webhook may be delivered multiple times.
+
+Without idempotency:
+
+❌ Inventory deducted twice
+❌ Customer gets multiple emails
+❌ Multiple invoices created
+
+The payment request and the webhook are two different things.
+
+1. Your application sends a payment request (Outgoing API call)
+   When the customer clicks Pay, your backend calls the payment gateway API.
+   Frontend
+   │
+   ▼
+   Payment Service
+   │
+   POST /create-payment
+   │
+   ▼
+   Payment Gateway
+   This is a normal REST API request, not a webhook.
+
+2. The payment gateway sends the payment result (Incoming webhook)
+
+After the customer completes payment, the gateway notifies your backend.
+
+Payment Gateway
+│
+POST /webhook
+│
+▼
+Payment Service
+This is a webhook because the payment gateway is calling your API.
+
+If you're using Kafka
+
+Order Service
+│
+▼
+Kafka Topic
+│
+▼
+Payment Service (Consumer)
+│
+▼
+Call Payment Gateway API ← Normal API call
+│
+Customer Pays
+│
+▼
+Payment Gateway
+│
+▼
+Webhook → Payment Service
+│
+▼
+Update DB
+│
+▼
+Publish PaymentCompleted event to Kafka
+
+5. Q. Design for eventual consistency so webhook retries can recover from server crashes after a successful payment. How to make design?
+
+Problem Scenario
+Suppose:
+Customer
+|
+| Pay ₹1000
+↓
+Payment Gateway
+|
+| SUCCESS
+↓
+Payment Gateway sends webhook
+|
+↓
+Your Payment Service
+
+Now imagine:
+
+Payment gateway successfully deducts money.
+Webhook reaches your server.
+Your server crashes before updating DB.
+
+Current state:
+Payment Gateway : SUCCESS
+Payment DB : PENDING
+Order DB : PENDING
+
+Solution Design
+
+1. Store payment transaction before calling gateway
+
+Payment table:
+Payment
+
+---
+
+paymentId
+orderId
+gatewayPaymentId
+amount
+status
+createdAt
+updatedAt
+
+Initially:
+
+paymentId = PAY123
+status = PENDING
+
+2. Use webhook as the source of truth
+   Do not depend on frontend response.
+
+3. Make webhook processing idempotent
+
+4. Use Transaction + Outbox Pattern
+
+This is the most senior-level answer.
+
+When webhook arrives:
+Database Transaction
+
+---
+
+Update Payment
+PENDING → SUCCESS
+
+Insert Outbox Event
+
+PaymentCompleted
+
+Commit
+
+---
+
+Database:
+
+Payment Table
+
+PAY123
+SUCCESS
+Outbox Table
+id
+eventType
+payload
+status
+
+Example:
+
+PaymentCompleted
+{
+orderId:"ORD123",
+paymentId:"PAY123"
+} 5. Background worker publishes event
+
+A worker continuously reads:
+
+Outbox Table
+|
+|
+↓
+Kafka Topic
+
+Example:
+
+PaymentCompleted Topic
+|
+|
+
+---
+
+| | |
+Inventory Shipping Notification
+
+Why?
+
+Because if Kafka is down, your payment update is not lost.
+
+6. Reconciliation Job (Very Important)
+
+Even with webhooks, create a scheduled job.
+
+Example:
+
+Every 15 minutes:
+
+Find payments:
+
+status=PENDING
+AND
+created_time > 15 minutes
+
+Call gateway:
+
+GET /payment/status/PAY123
+
+Gateway response:
+
+SUCCESS
+
+Update:
+
+Payment SUCCESS
+
+Complete Recovery Flow
+
+Customer Pays
+      |
+      ↓
+Gateway SUCCESS
+      |
+      ↓
+Webhook
+      |
+      ↓
+Payment Service crashes
+      |
+      ↓
+Gateway retries webhook
+      |
+      ↓
+Payment Service receives webhook
+      |
+      ↓
+Idempotent update
+      |
+      ↓
+Payment SUCCESS
+      |
+      ↓
+Outbox Event
+      |
+      ↓
+Kafka
+      |
+      ↓
+Inventory / Shipping / Notification
+
