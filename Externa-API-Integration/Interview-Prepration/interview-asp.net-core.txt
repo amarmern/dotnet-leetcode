@@ -1,0 +1,636 @@
+Asp.net core
+How do you improve API performance?
+Redis Cache
+Async Programming
+Pagination
+Compression
+Indexes
+Connection Pooling
+Background Processing
+CDN
+Lazy Loading
+Response Caching
+Tell me about a challenging problem.
+Visa API timeout.
+Implemented
+Retry
+Circuit Breaker
+Dead Letter Queue
+Monitoring
+Fallback
+System became resilient.
+
+ASP.NET Core
+Request Lifecycle
+Browser
+
+↓
+
+Kestrel
+
+↓
+
+Middleware
+
+↓
+
+Routing
+
+↓
+
+Authentication
+
+↓
+
+Authorization
+
+↓
+
+Controller
+
+↓
+
+Service
+
+↓
+
+Repository
+
+↓
+
+SQL Server
+
+↓
+
+Response
+1. What is Middleware?
+Answer
+Middleware is software that executes on every HTTP request.
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+Common Middleware
+• Exception Handling
+• Logging
+• CORS
+• Authentication
+• Authorization
+• Routing
+My Responsibilities
+Tell them:
+• Designed REST APIs using ASP.NET Core.
+• Implemented business logic for enrolment and de-enrolment.
+• Integrated with Visa APIs.
+• Published Kafka events after successful transactions.
+• Consumed Kafka messages for downstream processing.
+• Used Redis caching to improve performance.
+• Optimised SQL queries and created indexes.
+• Wrote unit tests and participated in code reviews.
+• Deployed services using Docker and Kubernetes.
+• Supported production incidents and root cause analysis.
+
+2. When should you create a new version?
+
+Usually need a new version:
+
+Changing:
+
+name → productName
+
+Removing a field.
+
+Changing the meaning/type of an existing field.
+
+Changing the response structure.
+
+Changing required request parameters in a breaking way.
+
+Changing business behavior in a way that breaks existing consumers.
+
+
+3. what is middleware how to cumpm middleware implement?
+Middleware is a component that handles HTTP requests and responses in the ASP.NET Core request pipeline.
+
+public class MyMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public MyMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        Console.WriteLine("Before Request");
+
+        await _next(context);
+
+        Console.WriteLine("After Request");
+    }
+}
+
+var app = builder.Build();
+
+app.UseMiddleware<MyMiddleware>();
+
+app.MapControllers();
+
+app.Run();
+
+explain:
+ustom middleware is a reusable component in the ASP.NET Core HTTP pipeline. It can execute logic before and after the next middleware by using RequestDelegate. I implement it as a class with a RequestDelegate constructor parameter and an InvokeAsync(HttpContext) method, then register it using UseMiddleware<T>(). I commonly use custom middleware for centralized exception handling, correlation IDs, request logging, auditing and security headers. Middleware ordering is important because each middleware controls when the next component executes.
+
+1. Exception Handling
+        ↓
+2. HTTPS Redirection
+        ↓
+3. Static Files
+        ↓
+4. Routing
+        ↓
+5. CORS
+        ↓
+6. Authentication
+        ↓
+7. Authorization
+        ↓
+8. Endpoints / Controllers
+
+program.cs 
+
+var app = builder.Build();
+
+app.UseExceptionHandler("/error");
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseCors("MyPolicy");
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
+
+4. what is differnce between mapcontroller and run methos?
+
+Ans: 
+
+The main difference is MapControllers() maps controller endpoints, while Run() ends the middleware pipeline.
+
+5.How to improve Entity Framework Core performance?
+1. Use AsNoTracking() for read-only queries ⭐
+
+By default, EF Core tracks entities.
+
+var products = await _context.Products
+    .AsNoTracking()
+    .Where(x => x.IsActive)
+    .ToListAsync();
+
+For read-only operations, AsNoTracking() avoids change-tracking overhead.
+
+Interview: "For read-only queries, I use AsNoTracking() to reduce memory and tracking overhead."
+
+2. Select only the required columns ⭐
+
+Avoid:
+
+var products = await _context.Products.ToListAsync();
+
+If you only need two fields:
+
+var products = await _context.Products
+    .AsNoTracking()
+    .Select(x => new ProductDto
+    {
+        Id = x.Id,
+        Name = x.Name
+    })
+    .ToListAsync();
+
+This generates SQL that retrieves only the required columns.
+
+3. Avoid N+1 queries ⭐
+
+Bad pattern:
+
+var orders = await _context.Orders.ToListAsync();
+
+foreach (var order in orders)
+{
+    var customer = await _context.Customers
+        .FirstOrDefaultAsync(x => x.Id == order.CustomerId);
+}
+
+This can generate:
+
+1 query → Orders
+N queries → Customers
+
+Instead, use a join/projection:
+
+var orders = await _context.Orders
+    .AsNoTracking()
+    .Select(o => new OrderDto
+    {
+        Id = o.Id,
+        CustomerName = o.Customer.Name
+    })
+    .ToListAsync();
+
+4. Be careful with Include()
+
+You can use:
+
+var orders = await _context.Orders
+    .Include(x => x.Customer)
+    .ToListAsync();
+
+But excessive Include() can produce very large joins and duplicate data.
+
+For complex queries, projection is often better:
+
+.Select(x => new OrderDto
+{
+    Id = x.Id,
+    CustomerName = x.Customer.Name
+})
+5. Use pagination ⭐
+
+Don't retrieve 1 million records:
+
+var orders = await _context.Orders.ToListAsync();
+
+Use pagination:
+
+var orders = await _context.Orders
+    .AsNoTracking()
+    .OrderBy(x => x.Id)
+    .Skip((page - 1) * pageSize)
+    .Take(pageSize)
+    .ToListAsync();
+
+For very large datasets, consider keyset/cursor pagination instead of large Skip() values.
+
+6. Create proper database indexes ⭐
+
+Suppose you frequently execute:
+
+var users = await _context.Users
+    .Where(x => x.Email == email)
+    .ToListAsync();
+
+Create an index on Email.
+
+In EF Core:
+
+modelBuilder.Entity<User>()
+    .HasIndex(x => x.Email);
+
+But don't blindly create indexes. Indexes improve reads but can increase:
+
+Insert cost
+Update cost
+Storage
+Maintenance
+
+Use the database execution plan and actual query patterns to decide.
+
+7. Avoid unnecessary SaveChanges()
+
+Bad:
+
+foreach (var product in products)
+{
+    product.IsActive = true;
+    await _context.SaveChangesAsync();
+}
+
+This potentially performs many database round trips.
+
+Better:
+
+foreach (var product in products)
+{
+    product.IsActive = true;
+}
+
+await _context.SaveChangesAsync();
+
+For large bulk operations, consider EF Core's set-based operations such as ExecuteUpdateAsync() / ExecuteDeleteAsync() where appropriate.
+
+8. Use async APIs
+
+Use:
+
+await _context.Products.ToListAsync();
+
+instead of:
+
+_context.Products.ToList();
+
+Async database operations help avoid blocking request threads while waiting for I/O.
+
+9. Avoid loading unnecessary related data
+
+Instead of:
+
+var customers = await _context.Customers
+    .Include(x => x.Orders)
+    .Include(x => x.Address)
+    .Include(x => x.Payments)
+    .ToListAsync();
+
+If the API only needs customer names:
+
+var customers = await _context.Customers
+    .AsNoTracking()
+    .Select(x => new
+    {
+        x.Id,
+        x.Name
+    })
+    .ToListAsync();
+10. Use compiled queries for very hot queries
+
+For queries executed extremely frequently with the same structure, EF Core compiled queries can reduce query-compilation overhead.
+
+Don't use them everywhere. First measure and identify genuine hot paths.
+
+11. Use caching
+
+For frequently accessed data that doesn't change often:
+
+API
+ ↓
+Redis
+ ↓ cache miss
+EF Core
+ ↓
+Database
+
+For example:
+
+Product catalog
+Configuration
+Reference data
+
+This can dramatically reduce database load.
+
+12. Check the generated SQL ⭐
+
+One of the most important Senior-level practices is:
+
+Don't assume EF Core generated efficient SQL—inspect it.
+
+For example:
+
+var query = _context.Products
+    .Where(x => x.Price > 100);
+
+Console.WriteLine(query.ToQueryString());
+
+Then inspect the SQL and database execution plan.
+
+Look for:
+
+Table scans
+Missing indexes
+Expensive joins
+Large result sets
+Poor filtering
+N+1 queries
+
+"How would you improve EF Core performance?"
+First, I would identify the slow queries using application monitoring and database execution plans. At the EF Core level, I would use AsNoTracking() for read-only queries, project only the required columns, avoid N+1 queries and unnecessary Include(), implement pagination, and use async database operations. At the database level, I would verify indexes and execution plans. For frequently accessed data, I would use Redis caching. For high-volume updates, I would consider set-based(bulk) operations such as ExecuteUpdateAsync. I would measure the impact rather than applying optimizations blindly.
+
+
+6. What is Clean Architecture?
+
+Clean Architecture separates an application into layers so that business logic is independent of frameworks, databases, UI, and external services.
+
+                    ┌─────────────────────┐
+                    │    Web/API          │
+                    │ Controllers         │
+                    │ Middleware           │
+                    └──────────┬──────────┘
+                               ↓
+                    ┌─────────────────────┐
+                    │   Application       │
+                    │ Use Cases            │
+                    │ Services             │
+                    │ DTOs                 │
+                    │ Interfaces           │
+                    └──────────┬──────────┘
+                               ↓
+                    ┌─────────────────────┐
+                    │      Domain         │
+                    │ Entities             │
+                    │ Business Rules       │
+                    │ Value Objects        │
+                    └─────────────────────┘
+
+                    Infrastructure
+                    ┌─────────────────────┐
+                    │ EF Core              │
+                    │ SQL                  │
+                    │ Redis                │
+                    │ Kafka                │
+                    │ External APIs        │
+                    └─────────────────────┘
+
+Dependency structure
+                         API
+                          |
+                          ↓
+                    Application
+                          |
+                          ↓
+                       Domain
+                          ↑
+                          |
+                    Infrastructure
+
+Infrastructure implements interfaces defined by Application/Domain.
+
+For example:
+
+Application
+    |
+    | IOrderRepository
+    ↓
+Infrastructure
+    |
+    | OrderRepository
+    ↓
+EF Core / SQL Server
+
+Domain should NOT depend on:
+❌ EF Core
+❌ ASP.NET Core
+❌ Redis
+❌ Kafka
+❌ SQL Server
+❌ Controllers
+
+Application project
+
+Application contains use cases/application business logic.
+
+For example:
+
+Application/
+ ├── Interfaces/
+ │    ├── IOrderRepository.cs
+ │    └── IPaymentService.cs
+ │
+ ├── Orders/
+ │    ├── CreateOrder/
+ │    └── GetOrder/
+ │
+ ├── DTOs/
+ └── Validators/
+
+Example:
+
+public interface IOrderRepository
+{
+    Task<Order?> GetByIdAsync(int id);
+    Task AddAsync(Order order);
+}
+
+Application says:
+
+"I need an OrderRepository."
+
+It doesn't care whether the implementation uses:
+
+SQL Server
+PostgreSQL
+MongoDB
+
+Infrastructure project
+
+Infrastructure contains implementations of external dependencies.
+
+For example:
+
+Infrastructure/
+ ├── Persistence/
+ │    ├── AppDbContext.cs
+ │    └── OrderRepository.cs
+ │
+ ├── Redis/
+ │    └── RedisCacheService.cs
+ │
+ ├── Messaging/
+ │    └── KafkaProducer.cs
+ │
+ └── ExternalServices/
+      └── PaymentService.cs
+
+API project
+
+The API is the entry point.
+
+Api/
+ ├── Controllers/
+ ├── Middleware/
+ ├── Filters/
+ ├── Extensions/
+ └── Program.cs
+
+ How do you manage NuGet packages in Clean Architecture?
+
+ manage NuGet packages according to the responsibility of each layer. Domain has minimal dependencies. Application contains packages required for application-level concerns such as validation or mediation. Infrastructure contains implementation-specific packages such as EF Core, SQL providers, Redis and Kafka. API contains ASP.NET Core, Swagger, authentication and API-versioning packages. For larger solutions, I prefer Central Package Management using Directory.Packages.props so package versions are centrally controlled and consistent across projects. I also regularly check outdated and vulnerable packages and avoid adding infrastructure dependencies to the Domain or Application layers unnecessarily.
+
+ the key value :
+
+ Domain
+  ↓
+Minimal dependencies
+
+Application
+  ↓
+Business/application concerns
+
+Infrastructure
+  ↓
+EF Core / Redis / Kafka / External SDKs
+
+API
+  ↓
+HTTP / Swagger / Auth / Middleware
+
+what is CSRF? XSS?
+
+CSRF and XSS are two common web security vulnerabilities,
+
+1. CSRF — Cross-Site Request Forgery
+How do we prevent CSRF?
+
+Common protections:
+
+Anti-forgery tokens
+SameSite cookies
+Secure cookies
+HttpOnly cookies
+Validate Origin/Referer where appropriate
+
+ASP.NET Core provides antiforgery support.
+
+[ValidateAntiForgeryToken]
+public IActionResult Transfer(TransferRequest request)
+{
+    ...
+}
+
+2. XSS — Cross-Site Scripting
+
+XSS happens when an attacker manages to inject malicious JavaScript/content into a page that other users view.
+
+Example attacker input:
+Attacker
+   ↓
+Malicious script
+   ↓
+Application database
+   ↓
+Victim opens page
+   ↓
+Browser executes script
+
+Easy way to remember
+
+CSRF:
+
+"The attacker makes your browser send a request."
+
+XSS:
+
+"The attacker makes your browser execute their script."
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -29,8 +29,57 @@ Order Database
 
 })
 
+step 1: appsettings.json
+ "JWT": {  
+    "ValidAudience": "http://localhost:4200",  
+    "ValidIssuer": "http://localhost:61955",  
+    "Secret": "ByYM000OLlMQG6VVVp1OH7Xzyr7gHuw1qvUC5dcGt3SNM"  
+  } 
+
+step 2:  Configure JWT in Program.cs.
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+Enable authentication and authorization.
+app.UseAuthentication();
+app.UseAuthorization();
+
+[HttpPost("register")]
+public async Task<IActionResult> Register(RegisterDto model)
+{
+    var user = new ApplicationUser
+    {
+        UserName = model.Email,
+        Email = model.Email
+    };
+
+    var result = await _userManager.CreateAsync(user, model.Password);
+
+    if (!result.Succeeded)
+        return BadRequest(result.Errors);
+
+    return Ok("User created successfully.");
+}
+
+public class RegisterDto
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
+}
+
 [ApiController]
-[Route("api/auth")]
+[Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;

@@ -41,7 +41,7 @@ namespace HelloWorld
 
 /*
 /// Output:
-//Special Static Constructor
+Special Static Constructor
 Base Static Constructor
 Base Empty Constructor
 Special Empty Constructor
