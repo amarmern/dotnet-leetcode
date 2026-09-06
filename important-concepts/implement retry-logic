@@ -1,0 +1,19 @@
+public async Task<string> CallApiAsync()
+{
+    int maxRetries = 3;
+    for (int attempt = 1; attempt <= maxRetries; attempt++)
+    {
+        try
+        {
+            return await _httpClient.GetStringAsync("https://example.com/api");
+        }
+        catch (HttpRequestException)
+        {
+            if (attempt == maxRetries)
+                throw;
+            await Task.Delay(1000);
+        }
+    }
+
+    throw new Exception("API failed");
+}
